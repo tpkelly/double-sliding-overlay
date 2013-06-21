@@ -25,8 +25,8 @@
 
 @implementation ViewController
 {
-    SEssentialsSlidingOverlay *innerlay;
-    SEssentialsSlidingOverlay *overlay;
+    SEssentialsSlidingOverlay *leftOverlay;
+    SEssentialsSlidingOverlay *rightOverlay;
 }
 
 - (void)viewDidLoad
@@ -35,39 +35,39 @@
 	// Do any additional setup after loading the view, typically from a nib.
     
     //Set up right
-    overlay = [[SEssentialsSlidingOverlay alloc] initWithFrame:self.view.frame andToolbar:NO];
-    overlay.underlayLocation = SEssentialsSlidingOverlayLocationRight;
-    [self.view addSubview:overlay];
+    rightOverlay = [[SEssentialsSlidingOverlay alloc] initWithFrame:self.view.frame andToolbar:NO];
+    rightOverlay.underlayLocation = SEssentialsSlidingOverlayLocationRight;
+    [self.view addSubview:rightOverlay];
     
     //Set up left
-    innerlay = [[SEssentialsSlidingOverlay alloc] initWithFrame:self.view.frame];
-    [overlay addSubview:innerlay];
+    leftOverlay = [[SEssentialsSlidingOverlay alloc] initWithFrame:self.view.frame];
+    [rightOverlay addSubview:leftOverlay];
 
     //Set up delegates
-    overlay.gestureRecognizer.delegate = self;
-    innerlay.gestureRecognizer.delegate = self;
+    rightOverlay.gestureRecognizer.delegate = self;
+    leftOverlay.gestureRecognizer.delegate = self;
     
     //Set up toolbar button
     UIButton *button = [self createCloneButton];
     button.center = CGPointMake(self.view.bounds.size.width - 40, 25);
-    [button addTarget:overlay action:@selector(toggleUnderlayAnimated:) forControlEvents:UIControlEventTouchUpInside];
-    [innerlay.toolbar addSubview:button];
+    [button addTarget:rightOverlay action:@selector(toggleUnderlayAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [leftOverlay.toolbar addSubview:button];
 }
 
 -(UIButton*)createCloneButton
 {
     //Setup
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.bounds = innerlay.toolbar.button.bounds;
+    button.bounds = leftOverlay.toolbar.button.bounds;
 
     //Styling
-    button.backgroundColor = innerlay.style.buttonTintColor;
-    [button setImage:innerlay.style.buttonImage forState:UIControlStateNormal];
-    [button setImage:innerlay.style.buttonPressedImage forState:UIControlStateHighlighted];
+    button.backgroundColor = leftOverlay.style.buttonTintColor;
+    [button setImage:leftOverlay.style.buttonImage forState:UIControlStateNormal];
+    [button setImage:leftOverlay.style.buttonPressedImage forState:UIControlStateHighlighted];
     
     //Masking
-    UIImageView *maskView = [[UIImageView alloc] initWithImage:innerlay.style.buttonMask];
-    maskView.frame = innerlay.toolbar.button.layer.bounds;
+    UIImageView *maskView = [[UIImageView alloc] initWithImage:leftOverlay.style.buttonMask];
+    maskView.frame = leftOverlay.toolbar.button.layer.bounds;
     button.layer.mask = maskView.layer;
     
     return button;
@@ -87,7 +87,7 @@
 
 -(SEssentialsSlidingOverlay*)otherView:(UIGestureRecognizer*)gesture
 {
-    return (gesture.view == overlay) ? innerlay : overlay;
+    return (gesture.view == rightOverlay) ? leftOverlay : rightOverlay;
 }
 
 @end
